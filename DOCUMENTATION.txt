@@ -1,0 +1,78 @@
+CLIENT ACTIONS:
+
+1. Reading:
+
+command issued by client: Read Path1
+action by NM: returns the precise IP and port of SS to Client
+Client Action: client now makes a direct connection with SS
+STRUCT expected by client: IP with port
+
+2. Writing:
+
+command issued by client: Write Path1
+action by NM: returns the precise IP and port of SS to Client
+Client Action: client now makes a direct connection with SS
+STRUCT expected by client: IP with port
+
+3. Retrieving Information:
+
+command issued by client: Info Path1
+action by NM: returns the precise IP and port of SS to Client
+Client Action: client now makes a direct connection with SS
+STRUCT expected by client: IP with port
+
+4. Stopping direct connection:
+
+command issued by client: STOP
+Client Action: the connection is stopped
+
+5. Creating file:
+
+two seperate commands, createfile,createdir
+
+command issued by client: create Path1
+action by NM: it identifies the correct SS and sends the request forward for execution
+communication to the NM by SS: it sends an ACK packet to confirm the file action
+communication to the client by SS: it sends an ACK packet to confirm the action completion or not
+STRUCT expected by the client: ACK struct
+
+6. Deleting file:
+
+two seperate commands, deletefile,deletedir
+
+command issued by client: delete Path1
+action by NM: it identifies the correct ss and sends the request forward for execution
+communication to the NM by SS: it sends an ACK packet to confirm the file action
+communication to the client by SS: it sends an ACK packet to confirm the action completion or not
+STRUCT expected by the client: ACK struct
+
+7. Copying files and directories:
+
+command issued by client: copy Path1 Path2      where Path1=SRC and Path2=directories
+action by NM: NM does the copying process
+communication to the client by SS: it sends an ACK packet to confirm the action completion or not
+STRUCT expected by the client: ACK struct
+
+
+-----------------------------------------------------------------------
+So there are many clients and there is just one NM, so we will create a queue to keep track of all the clients requests
+Client makes the connection with the SS and not the other way around 
+So we need to do many things, we need to maintain different structs for different things 
+
+Struct1: for ip and client port of the SS
+Struct2: for ACK between NM and client
+Struct3: request forward to SS
+
+-----------------------------------------------------------------------
+we are using port 5000 as Master_client_port and 5001 as Master_server_port
+we will start client ports from 5100 t0 5199 and storage server ports from 5200 to 5299 ( this is on the naming server side )
+each storage server will also have listening port numbered from 5300 to 5399
+
+-----------------------------------------------------------------------
+so on start of a storage server, it will try to initiate connection with the master server port and connect to a storage server port 52xx, after that
+it will start listening on 53xx based on its index
+
+to access the linked list containing all files under a given directory along with tehir port number 
+define a TRIE_CONTENT_HEAD. The LL_Tries_Ports_fn fn handles the rest. fn takes THP and string(path of dir) as parameters
+To iterate over these values
+define a LL_NODE_TRIE_CONTENT object and assign it th LLH->first;
